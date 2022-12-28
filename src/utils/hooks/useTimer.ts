@@ -66,11 +66,10 @@ export const useTimer = ({
   }, []);
 
   const pause = () => {
-    if (firstLaunch)
-      setPaused((paused: boolean) => {
-        timerStatus.current = !paused;
-        return !paused;
-      });
+    if (firstLaunch) {
+      timerStatus.current = !timerStatus.current;
+      setPaused((paused: boolean) => !paused);
+    }
   };
 
   const start = useCallback(
@@ -159,7 +158,7 @@ export const useTimer = ({
       //   timer.current = null;
       start();
     }
-  }, [minToHMS, delay, duration, firstLaunch, paused, start]);
+  }, [minToHMS, delay, duration, start]);
 
   useEffect(() => {
     const [hours, minutes, seconds] = displayedTime
