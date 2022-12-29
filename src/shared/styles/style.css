@@ -1,7 +1,15 @@
+/* General */
+
 ::selection {
   background-color: yellow;
   color: #000;
 }
+
+button:active {
+  transform: scale(0.94);
+}
+
+/* styles */
 
 .app {
   display: flex;
@@ -12,19 +20,64 @@
   gap: 35px;
 }
 
-.app .watchText {
+.app .watchText,
+.app .watchText .passedTime,
+.app .watchText .targetTime {
   font-size: 5rem;
   font-family: 'Courier New', Courier, monospace;
   font-weight: bold;
+  text-align: center;
   background-color: yellow;
   color: #000;
   padding: 20px 40px;
   border-radius: 60px;
   transition: all 0.3s ease-in-out;
+  animation: zoomOut 0.3s ease-in-out;
+  position: relative;
 }
+
+.app .watchText {
+  min-width: 400px;
+  position: relative;
+}
+
+.app .watchText .passedTime,
+.app .watchText .targetTime {
+  background-color: #000;
+  color: yellow;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: none;
+  transition: all 0.3s ease-in-out;
+}
+
+.app .watchText .passedTime {
+  left: 105%;
+  animation: toLeft 0.3s ease-in-out;
+}
+
+.app .watchText .targetTime {
+  right: 105%;
+  animation: toRight 0.5s ease-in-out;
+}
+
 .app .watchText:hover {
   font-size: 6rem;
   cursor: pointer;
+}
+
+.app .watchText:hover .passedTime { 
+  display: block; 
+}
+
+.app .watchText:hover .targetTime { 
+  display: block; 
+}
+
+.app .times-container {
+  transition: all 0.3s ease-in-out;
+  animation: zoomOut 0.3s ease-in-out;
 }
 
 .app .times {
@@ -61,8 +114,7 @@
   cursor: pointer;
 }
 
-.app .stop-btn,
-.app .reset-btn,
+.app .control-btn,
 .app .times button {
   border-radius: 40px;
   font-size: 25px;
@@ -80,13 +132,16 @@
   flex-grow: 1;
 }
 
-.app .stop-btn {
+.app .control-btn {
   padding: 25px 30px;
+}
+.app .control-btn.pause-btn {
+  min-width: 350px;
+}
+.app .control-btn.stop-btn {
   min-width: 250px;
 }
-
-.app .reset-btn {
-  padding: 25px 30px;
+.app .control-btn.reset-btn {
   min-width: 150px;
 }
 
@@ -95,4 +150,32 @@
 .app .times button:hover {
   color: #eee;
   background-color: #000;
+}
+
+/* animations */
+@keyframes zoomOut {
+  from { transform: scale(0.7);}
+  to { transform: scale(1);}
+}
+
+@keyframes toLeft {
+  from { 
+    transform: translateY(-50%) translateX(100px);
+    opacity: 0.5;
+  }
+  to { 
+    transform: translateY(-50%) translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toRight {
+  from { 
+    transform: translateY(-50%) translateX(-100px);
+    opacity: 0.5;
+  }
+  to { 
+    transform: translateY(-50%) translateX(0);
+    opacity: 1;
+  }
 }

@@ -5,9 +5,12 @@ export default function App() {
   const [duration, setDuration] = useState(10);
 
   const {
-    countingDown: { display: countDownDisplay },
-    stop,
+    countingDown: { minutes: countDownMinutes, seconds: countDownSeconds },
+    countingUp: { minutes: countUpMinutes, seconds: countUpSeconds },
     started,
+    paused,
+    stop,
+    pause,
     reset,
   } = useTimer({
     duration,
@@ -19,13 +22,32 @@ export default function App() {
     <div className="app">
       {started && (
         <>
-          <div className={`watchText ${started && "start"}`}>
-            {countDownDisplay}
+          <div className={`watchText`}>
+            {[
+              countDownMinutes.toString().padStart(2, "0"),
+              countDownSeconds.toString().padStart(2, "0"),
+            ].join(":")}
+            <div className="passedTime">
+              {[
+                countUpMinutes.toString().padStart(2, "0"),
+                countUpSeconds.toString().padStart(2, "0"),
+              ].join(":")}
+            </div>
+            <div className="targetTime">
+              {[
+                duration.toString().padStart(2, "0"),
+                (0).toString().padStart(2, "0"),
+              ].join(":")}
+            </div>
           </div>
-          <button className="stop-btn" onClick={stop}>
+
+          <button className="control-btn pause-btn" onClick={pause}>
+            {paused ? "play" : "pause"}
+          </button>
+          <button className="control-btn stop-btn" onClick={stop}>
             stop
           </button>
-          <button className="reset-btn" onClick={reset}>
+          <button className="control-btn reset-btn" onClick={reset}>
             reset
           </button>
         </>
