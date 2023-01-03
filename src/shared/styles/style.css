@@ -100,11 +100,11 @@ button:active {
 
 .app .watchText:hover::before {
   animation: watchTextLine 0.5s ease-in-out forwards;
-  animation-delay: 0.5s;
+  animation-delay: 0.2s;
 }
 .app .watchText:hover::after {
   animation: watchTextLine 0.3s ease-in-out forwards;
-  animation-delay: 0.3s;
+  animation-delay: 0.2s;
 }
 
 @keyframes watchTextLine {
