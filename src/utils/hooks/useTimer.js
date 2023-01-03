@@ -3,7 +3,7 @@ exports.__esModule = true;
 exports.useTimer = void 0;
 var react_1 = require("react");
 var useTimer = function (_a) {
-    var callback = _a.callback, _b = _a.delay, delay = _b === void 0 ? 1000 : _b, _c = _a.isMilSeconds, isMilSeconds = _c === void 0 ? false : _c, duration = _a.duration, onChange = _a.onChange;
+    var duration = _a.duration, _b = _a.isMilSeconds, isMilSeconds = _b === void 0 ? false : _b, _c = _a.delay, delay = _c === void 0 ? 1000 : _c, onChange = _a.onChange, onStart = _a.onStart, onStop = _a.onStop, onEnded = _a.onEnded;
     duration = isMilSeconds ? duration / delay : duration;
     var timer = (0, react_1.useRef)();
     var timerStatus = (0, react_1.useRef)(false);
@@ -33,9 +33,10 @@ var useTimer = function (_a) {
     var minToHMS = (0, react_1.useCallback)(function (time) { return msToHMS(time * 60 * delay); }, [delay, msToHMS]);
     var stop = (0, react_1.useCallback)(function () {
         timerStatus.current = false;
-        setPaused(true);
         clearInterval(timer.current);
+        setPaused(true);
         setStarted(false);
+        onStop === null || onStop === void 0 ? void 0 : onStop();
     }, []);
     var pause = function () {
         if (firstLaunch) {
@@ -46,7 +47,8 @@ var useTimer = function (_a) {
     var start = (0, react_1.useCallback)(function start() {
         var _a, _b;
         if (timer.current) {
-            stop();
+            timerStatus.current = false;
+            clearInterval(timer.current);
         }
         setStarted(true);
         setFirstLaunch(true);
@@ -69,12 +71,6 @@ var useTimer = function (_a) {
                     seconds = 59;
                 }
                 // if the seconds, minutes and hours is less than 0 then stop the timer
-                if (hours <= 0 && minutes <= 0 && seconds <= 0) {
-                    clearInterval(timer.current);
-                    if (callback) {
-                        callback();
-                    }
-                }
                 setHours(hours);
                 setMinutes(minutes);
                 setSeconds(seconds);
@@ -84,9 +80,16 @@ var useTimer = function (_a) {
                     minutes.toString().padStart(2, "0"),
                     seconds.toString().padStart(2, "0"),
                 ].join(":"));
+                if (hours <= 0 && minutes <= 0 && seconds <= 0) {
+                    clearInterval(timer.current);
+                    timerStatus.current = false;
+                    setPaused(true);
+                    onEnded === null || onEnded === void 0 ? void 0 : onEnded();
+                }
             }
         }, delay);
-    }, [minToHMS, duration, delay, stop, callback]);
+        onStart === null || onStart === void 0 ? void 0 : onStart();
+    }, []);
     var reset = (0, react_1.useCallback)(function () {
         clearInterval(timer.current);
         setDisplayedTime(minToHMS(duration));

@@ -2,18 +2,23 @@ import { useRef, useState, useEffect, useCallback } from "react";
 
 export interface IUseTimerProps {
   duration: number;
-  callback?: () => void;
-  delay?: number;
   isMilSeconds?: boolean;
+  delay?: number;
   onChange?: (obj: any) => void;
+  onStart?: () => void;
+  onReset?: () => void;
+  onStop?: () => void;
+  onEnded?: () => void;
 }
 
 export const useTimer = ({
-  callback,
-  delay = 1000,
-  isMilSeconds = false,
   duration,
+  isMilSeconds = false,
+  delay = 1000,
   onChange,
+  onStart,
+  onStop,
+  onEnded,
 }: IUseTimerProps) => {
   duration = isMilSeconds ? duration / delay : duration;
 
@@ -60,9 +65,10 @@ export const useTimer = ({
 
   const stop = useCallback(() => {
     timerStatus.current = false;
-    setPaused(true);
     clearInterval(timer.current);
+    setPaused(true);
     setStarted(false);
+    onStop?.();
   }, []);
 
   const pause = () => {
@@ -72,64 +78,64 @@ export const useTimer = ({
     }
   };
 
-  const start = useCallback(
-    function start() {
-      if (timer.current) {
-        stop();
-      }
+  const start = useCallback(function start() {
+    if (timer.current) {
+      timerStatus.current = false;
+      clearInterval(timer.current);
+    }
 
-      setStarted(true);
-      setFirstLaunch(true);
-      timerStatus.current = true;
-      setPaused(false);
+    setStarted(true);
+    setFirstLaunch(true);
+    timerStatus.current = true;
+    setPaused(false);
 
-      let [hours, minutes, seconds] = minToHMS(duration || 0)
-        ?.split(":")
-        ?.map(e => parseInt(e));
+    let [hours, minutes, seconds] = minToHMS(duration || 0)
+      ?.split(":")
+      ?.map(e => parseInt(e));
 
-      timer.current = setInterval(() => {
-        if (timerStatus.current) {
-          // decrement seconds
-          if (seconds > 0) {
-            seconds--;
-          }
-
-          if (seconds === 0 && minutes > 0) {
-            minutes--;
-            seconds = 59;
-          }
-
-          if (minutes === 0 && hours > 0) {
-            hours--;
-            minutes = 59;
-            seconds = 59;
-          }
-
-          // if the seconds, minutes and hours is less than 0 then stop the timer
-          if (hours <= 0 && minutes <= 0 && seconds <= 0) {
-            clearInterval(timer.current);
-            if (callback) {
-              callback();
-            }
-          }
-
-          setHours(hours);
-          setMinutes(minutes);
-          setSeconds(seconds);
-
-          // update displayed time
-          setDisplayedTime(
-            [
-              hours.toString().padStart(2, "0"),
-              minutes.toString().padStart(2, "0"),
-              seconds.toString().padStart(2, "0"),
-            ].join(":"),
-          );
+    timer.current = setInterval(() => {
+      if (timerStatus.current) {
+        // decrement seconds
+        if (seconds > 0) {
+          seconds--;
         }
-      }, delay);
-    },
-    [minToHMS, duration, delay, stop, callback],
-  );
+
+        if (seconds === 0 && minutes > 0) {
+          minutes--;
+          seconds = 59;
+        }
+
+        if (minutes === 0 && hours > 0) {
+          hours--;
+          minutes = 59;
+          seconds = 59;
+        }
+
+        // if the seconds, minutes and hours is less than 0 then stop the timer
+        setHours(hours);
+        setMinutes(minutes);
+        setSeconds(seconds);
+
+        // update displayed time
+        setDisplayedTime(
+          [
+            hours.toString().padStart(2, "0"),
+            minutes.toString().padStart(2, "0"),
+            seconds.toString().padStart(2, "0"),
+          ].join(":"),
+        );
+
+        if (hours <= 0 && minutes <= 0 && seconds <= 0) {
+          clearInterval(timer.current);
+          timerStatus.current = false;
+          setPaused(true);
+          onEnded?.();
+        }
+      }
+    }, delay);
+
+    onStart?.();
+  }, []);
 
   const reset = useCallback(() => {
     clearInterval(timer.current);
