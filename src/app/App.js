@@ -1,5 +1,9 @@
 import { useState } from "react";
 import { useTimer } from "utils/hooks/useTimer";
+import { useEvery } from "utils/hooks/useEvery";
+import { toast } from "react-toastify";
+import { getRandom } from "utils/getRandom";
+import data from "../data/data.json";
 
 export default function App() {
   const [duration, setDuration] = useState(10);
@@ -16,7 +20,13 @@ export default function App() {
     duration,
   });
 
-  const times = [5, 10, 15, 20, 25, 30, 40, 50, 60];
+  useEvery({
+    duration: 1000 * 60 * 5,
+    callback: () => {
+      toast.info(getRandom(data.messages));
+    },
+    condition: !paused,
+  });
 
   return (
     <div className="app">
@@ -28,12 +38,14 @@ export default function App() {
               countDownSeconds.toString().padStart(2, "0"),
             ].join(":")}
             <div className="passedTime">
+              <div className="hint">passed time</div>
               {[
                 countUpMinutes.toString().padStart(2, "0"),
                 countUpSeconds.toString().padStart(2, "0"),
               ].join(":")}
             </div>
             <div className="targetTime">
+              <div className="hint">duration</div>
               {[
                 duration.toString().padStart(2, "0"),
                 (0).toString().padStart(2, "0"),
@@ -58,7 +70,7 @@ export default function App() {
           <h1>Choose a duration</h1>
 
           <div className="times">
-            {times.map(time => (
+            {data.times.map(time => (
               <button
                 key={"time" + time}
                 onClick={() => {

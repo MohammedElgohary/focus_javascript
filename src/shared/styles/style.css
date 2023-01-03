@@ -1,8 +1,38 @@
 /* General */
 
+body {
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+  scrollbar-width: 10px;
+  -ms-overflow-style: none;
+  overflow-y: auto !important;
+  overflow-x: auto !important;
+}
+
 ::selection {
   background-color: yellow;
   color: #000;
+}
+
+::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 4px yellow;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ffff66;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: yellow;
 }
 
 button:active {
@@ -16,7 +46,7 @@ button:active {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 80vh;
+  height: 100vh;
   gap: 35px;
 }
 
@@ -41,6 +71,51 @@ button:active {
   position: relative;
 }
 
+.app .watchText::after,
+.app .watchText::before {
+  content: "";
+  height: 60px;
+  width: 20%;
+  border: 7px solid yellow;
+  border-bottom: 0;
+  position: absolute;
+  top: -15px;
+  opacity: 0;
+  z-index: -1;
+}
+
+.app .watchText::before {
+  border-right: 0;
+  border-top-left-radius: 70px;
+  left: -15px;
+  transition: all 0.5s ease-in-out;
+}
+
+.app .watchText::after {
+  border-left: 0;
+  border-top-right-radius: 70px;
+  right: -15px;
+  transition: all 0.3s ease-in-out;
+}
+
+.app .watchText:hover::before {
+  animation: watchTextLine 0.5s ease-in-out forwards;
+  animation-delay: 0.5s;
+}
+.app .watchText:hover::after {
+  animation: watchTextLine 0.3s ease-in-out forwards;
+  animation-delay: 0.3s;
+}
+
+@keyframes watchTextLine {
+  100% {
+    opacity: 1;
+    width: calc(50% + 8px);
+    height: 82.5px;
+    border-color: #000;
+  }
+}
+
 .app .watchText .passedTime,
 .app .watchText .targetTime {
   background-color: #000;
@@ -52,6 +127,27 @@ button:active {
   transition: all 0.3s ease-in-out;
 }
 
+.app .watchText .passedTime .hint,
+.app .watchText .targetTime .hint {
+  font-size: 1rem;
+  font-family:'Times New Roman', Times, serif;
+  font-weight: bold;
+  text-align: center;
+  width: fit-content;
+  background-color: yellow;
+  color: #000;
+  border: 6px solid #fff;
+  padding: 8px 10px;
+  border-radius: 60px;
+  transition: all 0.3s ease-in-out;
+  animation: toBottomCentered 0.8s ease-in-out;
+  position: absolute;
+  text-transform: capitalize;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
 .app .watchText .passedTime {
   left: 105%;
   animation: toLeft 0.3s ease-in-out;
@@ -60,6 +156,24 @@ button:active {
 .app .watchText .targetTime {
   right: 105%;
   animation: toRight 0.5s ease-in-out;
+}
+.app .watchText .targetTime::before,
+.app .watchText .passedTime::before {
+  content: "";
+  border: 16px solid;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.app .watchText .passedTime::before {
+  border-color: transparent #000000 transparent transparent;
+  right: calc(100% - 1px);
+}
+
+.app .watchText .targetTime::before {
+ border-color: transparent transparent transparent #000000;
+  left: calc(100% - 1px);
 }
 
 .app .watchText:hover {
@@ -70,7 +184,7 @@ button:active {
 .app .watchText:hover .passedTime { 
   display: block; 
 }
-
+ 
 .app .watchText:hover .targetTime { 
   display: block; 
 }
@@ -99,6 +213,7 @@ button:active {
   background-color: yellow;
   padding: 6px 3px 6px 12px;
 }
+
 .app .times-container h1::after {
   content: "";
   width: 100%;
@@ -135,12 +250,15 @@ button:active {
 .app .control-btn {
   padding: 25px 30px;
 }
+
 .app .control-btn.pause-btn {
   min-width: 350px;
 }
+
 .app .control-btn.stop-btn {
   min-width: 250px;
 }
+
 .app .control-btn.reset-btn {
   min-width: 150px;
 }
@@ -152,10 +270,66 @@ button:active {
   background-color: #000;
 }
 
+
+@media screen and (max-width: 1500px){
+  
+  .app .watchText .passedTime, 
+  .app .watchText .targetTime {
+    font-size: 3rem;
+  }
+  .app .watchText {
+    font-size: 3.5rem;
+  }
+  
+  .app .watchText:hover {
+    font-size: 4rem;
+  }
+
+  .app .watchText {
+    min-width: 250px;
+  }
+
+  .app .watchText .passedTime, 
+  .app .watchText .targetTime {
+    min-width: 180px;
+  }
+
+  .app .watchText .passedTime,
+  .app .watchText .targetTime {
+    padding: 25px 40px 16px;
+  }
+
+  .app .control-btn,
+  .app .times button {
+    font-size: 1.3rem;
+  }
+
+  .app .control-btn.pause-btn {
+    min-width: 250px;
+  }
+  
+  .app .control-btn.stop-btn {
+    min-width: 200px;
+  }
+  
+  .app .control-btn.reset-btn {
+    min-width: 150px;
+  }
+
+  .app .control-btn {
+    padding: 20px 25px;
+  }
+}
+
 /* animations */
 @keyframes zoomOut {
   from { transform: scale(0.7);}
   to { transform: scale(1);}
+}
+
+@keyframes zoomOutCentered {
+  from { transform: scale(0.7) translate(-50%, -50%);}
+  to { transform: scale(1) translate(-50%, -50%);}
 }
 
 @keyframes toLeft {
@@ -165,6 +339,17 @@ button:active {
   }
   to { 
     transform: translateY(-50%) translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toBottomCentered {
+  from { 
+    transform: translateY(-80%) translateX(-50%);
+    opacity: 0.5;
+  }
+  to { 
+    transform: translateY(-50%) translateX(-50%);
     opacity: 1;
   }
 }
